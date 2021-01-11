@@ -26,7 +26,7 @@ router.post(
       process.env.JWT_KEY!
     );
     req.session = { jwt: userJwt };
-    res.status(201).send(user);
+    res.status(200).send(user);
   }
 );
 export { router as signinRouter };
