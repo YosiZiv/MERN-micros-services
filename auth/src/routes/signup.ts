@@ -22,16 +22,16 @@ router.post(
     if (!errors.isEmpty()) {
       throw new RequestValidationError(errors.array());
     }
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
     let user = await User.findOne({ email });
     if (user) {
       throw new BadRequestError("Email in use");
     }
-    user = User.build({ email, password });
+    user = User.build({ email, password, username });
     await user.save();
 
     const userJwt = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email, username },
       process.env.JWT_KEY!
     );
     req.session = { jwt: userJwt };
