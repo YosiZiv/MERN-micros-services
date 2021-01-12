@@ -57,7 +57,7 @@ const CustomTextField: React.FC<
 };
 
 const validationSchema = yup.object({
-  username: yup.string().min(6).max(30),
+  username: yup.string().min(2).max(30),
   email: yup.string().required().email(),
   password: yup.string().required().min(6).max(30),
   repeatPassword: yup

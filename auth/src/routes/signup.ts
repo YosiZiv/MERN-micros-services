@@ -10,11 +10,16 @@ const router = express.Router();
 router.post(
   "/api/users/signup",
   [
+    body("username")
+      .trim()
+      .isString()
+      .isLength({ min: 2, max: 20 })
+      .withMessage("username must be valid"),
     body("email").isEmail().withMessage("Email must be valid"),
     body("password")
       .trim()
-      .isLength({ min: 4, max: 20 })
-      .withMessage("Password must be between 4 - 20 char"),
+      .isLength({ min: 6, max: 30 })
+      .withMessage("Password must be between 6 - 30 char"),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
