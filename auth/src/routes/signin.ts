@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   "/api/users/signin",
   [
-    body("email").isEmail().withMessage("email must be valid"),
+    body("email").isEmail().withMessage("Email must be valid"),
     body("password").trim().isLength({ min: 6, max: 30 }),
   ],
   validateRequest,
@@ -26,7 +26,7 @@ router.post(
       process.env.JWT_KEY!
     );
     req.session = { jwt: userJwt };
-    res.status(201).send(user);
+    res.status(200).send(user);
   }
 );
 export { router as signinRouter };
