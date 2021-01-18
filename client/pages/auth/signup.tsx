@@ -5,16 +5,14 @@ import {
   Grid,
   Paper,
   Avatar,
-  FormControlLabel,
-  Checkbox,
   Link,
+  makeStyles,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import { makeStyles } from "@material-ui/core/styles";
 import { Formik, Form, useField, FieldAttributes } from "formik";
 import * as yup from "yup";
-import axios from "axios";
-
+import Router from "next/router";
+import useRequest from "../../hooks/useRequest";
 const useStyle = makeStyles({
   title: {
     textAlign: "center",
@@ -57,28 +55,33 @@ const CustomTextField: React.FC<
 };
 
 const validationSchema = yup.object({
-  username: yup.string().min(2).max(30),
+  username: yup.string().required().min(2).max(30),
   email: yup.string().required().email(),
   password: yup.string().required().min(6).max(30),
   repeatPassword: yup
     .string()
     .min(6)
     .max(30)
-    .test("passwordMatch", "Password Didnt Match", function (value) {
+    .test("passwordMatch", "Password didn't Match", function (value) {
       return value === this.parent.password;
     }),
 });
-const submitHandler = async ({ username, email, password }) => {
-  const response = await axios.post("/api/users/signup", {
-    username,
-    email,
-    password,
-  });
-  console.log(response.data);
-};
 
 export default function Signup() {
   const classes = useStyle();
+  const { doRequest, errors } = useRequest();
+  const submitHandler = async ({ username, email, password }) => {
+    doRequest({
+      url: "/api/users/signup",
+      method: "post",
+      body: {
+        username,
+        email,
+        password,
+      },
+      onSuccess: () => Router.push("/"),
+    });
+  };
   return (
     <Grid>
       <Paper className={classes.paper} elevation={10}>
@@ -146,6 +149,7 @@ export default function Signup() {
               >
                 Login
               </Button>
+              {errors}
               <Typography>
                 Already have account?
                 <Link> Sign in</Link>

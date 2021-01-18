@@ -13,7 +13,8 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { Formik, Form, useField, FieldAttributes } from "formik";
 import * as yup from "yup";
-import axios from "axios";
+import useRequest from "../../hooks/useRequest";
+import Router from "next/router";
 const useStyle = makeStyles({
   title: {
     textAlign: "center",
@@ -63,90 +64,111 @@ const validationSchema = yup.object({
     })
   ),
 });
-const submitHandler = async ({ email, password }) => {
-  const response = await axios.post("/api/users/signin", {
-    email,
-    password,
-  });
-  console.log(response.data);
-};
 
 export default function Signin() {
   const classes = useStyle();
+  const { doRequest, errors } = useRequest();
+  const submitHandler = async ({ email, password }) => {
+    doRequest({
+      url: "/api/users/signin",
+      method: "post",
+      body: {
+        email,
+        password,
+      },
+      onSuccess: () => Router.push("/"),
+    });
+  };
   return (
     <Grid>
       <Paper className={classes.paper} elevation={10}>
-        <Grid container direction="column" justify="center" alignItems="center">
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h6">Sign In</Typography>
-        </Grid>
-        <Formik
-          // init value to form
-          initialValues={{
-            email: "",
-            password: "",
-            pets: [{ type: "cat", name: "jarvis", id: Math.random() }],
-          }}
-          validationSchema={validationSchema}
-          onSubmit={async ({ email, password }, { setSubmitting }) => {
-            console.log("onSubmit", email, password);
-
-            setSubmitting(true);
-            submitHandler({ email, password });
-            // async submit
-            console.log(email, password);
-            setSubmitting(false);
-          }}
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          spacing={4}
         >
-          {() => (
-            <Form>
-              <CustomTextField
-                name="email"
-                className={classes.input}
-                placeholder="Enter Email"
-                label="Email"
-                type="email"
-                fullWidth={true}
-              />
-              <CustomTextField
-                name="password"
-                className={classes.input}
-                placeholder="Enter Password"
-                label="Password"
-                type="password"
-                fullWidth={true}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    // checked={state.checkedA}
-                    // onChange={handleChange}
-                    name="Remember Me"
+          <Grid item>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+
+            <Typography component="h6">Sign In</Typography>
+          </Grid>
+
+          <Grid item>
+            <Formik
+              // init value to form
+              initialValues={{
+                email: "",
+                password: "",
+              }}
+              validationSchema={validationSchema}
+              onSubmit={async ({ email, password }, { setSubmitting }) => {
+                setSubmitting(true);
+                submitHandler({ email, password });
+                setSubmitting(false);
+              }}
+            >
+              {() => (
+                <Form>
+                  <CustomTextField
+                    name="email"
+                    className={classes.input}
+                    placeholder="Enter Email"
+                    label="Email"
+                    type="email"
+                    fullWidth={true}
                   />
-                }
-                label="Remember Me"
-              />
-              <Button
-                className="signinButton"
-                fullWidth
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
-                Login
-              </Button>
-              <Typography>
-                <Link>Forget Password ?</Link>
-              </Typography>
-              <Typography>
-                Do you have an account?
-                <Link> Sign Up</Link>
-              </Typography>
-            </Form>
-          )}
-        </Formik>
+
+                  <CustomTextField
+                    name="password"
+                    className={classes.input}
+                    placeholder="Enter Password"
+                    label="Password"
+                    type="password"
+                    fullWidth={true}
+                  />
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        // checked={state.checkedA}
+                        // onChange={handleChange}
+                        name="Remember Me"
+                      />
+                    }
+                    label="Remember Me"
+                  />
+
+                  <Grid item>
+                    <Button
+                      className="signinButton"
+                      fullWidth
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Login
+                    </Button>
+                  </Grid>
+                </Form>
+              )}
+            </Formik>
+          </Grid>
+
+          <Grid item>
+            <Typography>
+              <Link href="#">Forget Password?</Link>
+            </Typography>
+
+            <Typography>
+              don't have account?
+              <Link href="/signup"> Sign Up</Link>
+            </Typography>
+          </Grid>
+        </Grid>
       </Paper>
     </Grid>
   );
