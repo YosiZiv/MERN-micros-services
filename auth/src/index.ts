@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { app } from "./app";
+// Server bootstrap 
 (async () => {
   try {
     if (!process.env.JWT_KEY) {
