@@ -16,6 +16,14 @@ build:
         manual: 
           - src: 'src/**/*.ts'
             dest: .
+    - image: katlany/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual: 
+          - src: 'src/**/*.ts'
+            dest: .
     - image: katlany/client
       context: client
       docker:
