@@ -6,7 +6,7 @@ import {
   requireAuth,
   NotAuthorizedError,
   BadRequestError,
-} from "@yztickets/common";
+} from "@yztickets/tickets-common";
 import { Ticket } from "../models/ticket";
 import { TicketUpdatedPublisher } from "../events/publishers/ticket-updated-publisher";
 import { natsWrapper } from "../nats-wrapper";
@@ -48,7 +48,6 @@ router.put(
       title: ticket.title,
       price: ticket.price,
       userId: ticket.userId,
-      version: ticket.version,
     });
 
     res.send(ticket);
